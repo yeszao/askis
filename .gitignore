@@ -1,5 +1,6 @@
 monitored_urls.txt
 *.env
+logs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
