@@ -1,0 +1,8 @@
+services:
+  monitor:
+    build: .
+    volumes:
+      - ./monitored_urls.txt:/workspace/monitored_urls.txt
+    env_file:
+      - local.env
+    command: "python src/main.py"
