@@ -1,0 +1,8 @@
+2025-01-01 16:30:28,919 - INFO - Adding job tentatively -- it will be properly scheduled when the scheduler starts
+2025-01-01 16:30:28,920 - INFO - Added job "check_urls" to job store "default"
+2025-01-01 16:30:28,920 - INFO - Scheduler started
+2025-01-01 16:30:29,423 - INFO - URL [https://simplechinesefood.com/health] return OK!
+2025-01-01 16:30:29,867 - INFO - URL [https://boardor.com/wp-json/wp/v2] return OK!
+2025-01-01 16:30:29,869 - INFO - Monitor started. Will run every 5 minutes.
+2025-01-01 16:30:48,988 - INFO - Scheduler has been shut down
+2025-01-01 16:30:48,989 - INFO - Monitor stopped.

@@ -1,11 +1,14 @@
 import requests
+import logging
 import smtplib
 from email.mime.text import MIMEText
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from src.config import  SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, \
     MONITORED_URLS, ALERT_TO_EMAIL, CHECK_TIMEOUT, CHECK_INTERVAL
+from src.log import initialize_logging
 
 
 def send_alert(receiver, body):
@@ -20,7 +23,7 @@ def send_alert(receiver, body):
             server.login(SMTP_USER, SMTP_PASS)
             server.send_message(msg)
     except Exception as e:
-        print(f"Failed to send email: {str(e)}")
+        logging.error(f"Failed to send email: {str(e)}")
 
 
 def check_url(url):
@@ -29,14 +32,14 @@ def check_url(url):
         response = requests.get(url, headers=headers, timeout=CHECK_TIMEOUT)
         if response.status_code != 200:
             error = f"Error! Url [{url}] was down!!! Return status code is [{response.status_code}]."
-            print(f"URL [{url}] return failed!")
+            logging.error(f"URL [{url}] return failed!")
             return error
         else:
-            print(f"URL [{url}] return OK!")
+            logging.info(f"URL [{url}] return OK!")
             return None
     except Exception as e:
         error = f"Error! Url [{url}] failed with exception: {str(e)}"
-        print(f"URL [{url}] failed with exception: {str(e)}")
+        logging.error(f"URL [{url}] failed with exception: {str(e)}")
         return error
 
 def check_urls():
@@ -54,6 +57,8 @@ def check_urls():
 
 
 if __name__ == '__main__':
+    initialize_logging("app.log")
+
     scheduler = BackgroundScheduler()
     scheduler.add_job(check_urls, 'interval', seconds=CHECK_INTERVAL)
     scheduler.start()
@@ -61,10 +66,10 @@ if __name__ == '__main__':
     # Run immediately on startup
     check_urls()
     
-    print("Monitor started. Will run every 5 minutes.")
+    logging.info("Monitor started. Will run every 5 minutes.")
     try:
         while True:
-            pass
+            time.sleep(1)
     except (KeyboardInterrupt, SystemExit):
         scheduler.shutdown()
-        print("Monitor stopped.")
+        logging.info("Monitor stopped.")

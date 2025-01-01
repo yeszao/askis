@@ -4,7 +4,11 @@ from pathlib import Path
 CHECK_INTERVAL = int(os.getenv("CHECK_INTERVAL", 300))
 CHECK_TIMEOUT = int(os.getenv("CHECK_TIMEOUT", 7))
 
-MONITORED_URLS = Path(__file__).parent.parent.joinpath("monitored_urls.txt").read_text().split()
+ROOT_DIR =  Path(__file__).parent.parent
+MONITORED_URLS = ROOT_DIR.joinpath("monitored_urls.txt").read_text().split()
+LOGS_DIR = ROOT_DIR.joinpath("logs")
+
+LOGS_DIR.mkdir(exist_ok=True)
 
 ALERT_TO_EMAIL = os.getenv("ALERT_TO_EMAIL")
 
