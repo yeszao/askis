@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
 
-CHECK_TIMEOUT = 7
+CHECK_INTERVAL = int(os.getenv("CHECK_INTERVAL", 300))
+CHECK_TIMEOUT = int(os.getenv("CHECK_TIMEOUT", 7))
 
 MONITORED_URLS = Path(__file__).parent.parent.joinpath("monitored_urls.txt").read_text().split()
 

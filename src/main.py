@@ -2,13 +2,13 @@ import requests
 import smtplib
 from email.mime.text import MIMEText
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from src.config import  SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, \
-    MONITORED_URLS, ALERT_TO_EMAIL, CHECK_TIMEOUT
+    MONITORED_URLS, ALERT_TO_EMAIL, CHECK_TIMEOUT, CHECK_INTERVAL
 
 
-def send_alert(receiver, errors):
-    body = '\n'.join(errors)
+def send_alert(receiver, body):
     msg = MIMEText(body)
 
     msg['Subject'] = "Website Monitor Alert"
@@ -46,12 +46,24 @@ def check_urls():
             error = future.result()
             if error:
                 errors.append(error)
-    return errors
+
+    if errors:
+        body = '\n'.join(errors)
+        send_alert(ALERT_TO_EMAIL, body)
 
 
 if __name__ == '__main__':
-    errors = check_urls()
-    if errors:
-       send_alert(ALERT_TO_EMAIL, errors)
-
-    print("Monitor runned done.")
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(check_urls, 'interval', seconds=CHECK_INTERVAL)
+    scheduler.start()
+    
+    # Run immediately on startup
+    check_urls()
+    
+    print("Monitor started. Will run every 5 minutes.")
+    try:
+        while True:
+            pass
+    except (KeyboardInterrupt, SystemExit):
+        scheduler.shutdown()
+        print("Monitor stopped.")
