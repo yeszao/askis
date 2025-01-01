@@ -24,8 +24,9 @@ def send_alert(receiver, body):
 
 
 def check_url(url):
+    headers = {"User-Agent": "Askis-bot"}
     try:
-        response = requests.get(url, timeout=CHECK_TIMEOUT)
+        response = requests.get(url, headers=headers, timeout=CHECK_TIMEOUT)
         if response.status_code != 200:
             error = f"Error! Url [{url}] was down!!! Return status code is [{response.status_code}]."
             print(f"URL [{url}] return failed!")
